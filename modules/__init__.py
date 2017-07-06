@@ -46,7 +46,7 @@ pp = pprint.PrettyPrinter(indent=6)
 
 
 def init_db():
-    print "INIT DB"
+    print("INIT DB")
     with app.app_context():
         db = get_db()
 
