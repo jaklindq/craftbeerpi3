@@ -159,13 +159,17 @@ class BoilStep(StepBase):
     temp = Property.Number("Temperature", configurable=True, default_value=100)
     kettle = StepProperty.Kettle("Kettle")
     timer = Property.Number("Timer in Minutes", configurable=True, default_value=90)
+    hopDispenser = StepProperty.Actor("hopDispenser")
     hop_1 = Property.Number("Hop 1 Addition", configurable=True)
     hop_1_added = Property.Number("",default_value=None)
-
     hop_2 = Property.Number("Hop 2 Addition", configurable=True)
     hop_2_added = Property.Number("", default_value=None)
     hop_3 = Property.Number("Hop 3 Addition", configurable=True)
     hop_3_added = Property.Number("", default_value=None)
+    hop_4 = Property.Number("Hop 4 Addition", configurable=True)
+    hop_4_added = Property.Number("", default_value=None)
+    hop_5 = Property.Number("Hop 5 Addition", configurable=True)
+    hop_5_added = Property.Number("", default_value=None)
 
     def init(self):
         '''
@@ -200,8 +204,9 @@ class BoilStep(StepBase):
 
         if self.__getattribute__("hop_%s_added" % number) is not True and time.time() > (
             self.timer_end - (int(self.timer) * 60 - int(value) * 60)):
+        	self.actor_off(int(self.hopDispenser))
             self.__setattr__("hop_%s_added" % number, True)
-            self.notify("Hop Alert", "Please add Hop %s" % number, timeout=None)
+            self.notify("Hop Alert", "Hop %s" % number, "added via HopDispenser", timeout=None)
 
     def execute(self):
         '''
@@ -217,6 +222,8 @@ class BoilStep(StepBase):
                 self.check_hop_timer(1, self.hop_1)
                 self.check_hop_timer(2, self.hop_2)
                 self.check_hop_timer(3, self.hop_3)
+                self.check_hop_timer(3, self.hop_4)
+                self.check_hop_timer(3, self.hop_5)
         # Check if timer finished and go to next step
         if self.is_timer_finished() == True:
             self.next()
